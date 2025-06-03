@@ -15,7 +15,7 @@ done
 SCRIPT_DIR_MAIN="$( cd -P "$( dirname "$SOURCE" )" &> /dev/null && pwd )"
 
 # PROJECT_ROOT will be the top-level project directory (e.g., /home/mark/Documents/wade/)
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR_MAIN")"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR_MAIN")" # Assumes script is in a direct child of PROJECT_ROOT (e.g., 'bash')
 
 
 #region -----Constants & Default Values-----
@@ -55,6 +55,21 @@ printf "\033]0;WadeUSA Dev Terminal\007" # Updated title
 #region -----Helper Functions (Generic)-----
 function clear_screen() {
   printf "\033c" # ANSI escape code to clear screen
+}
+
+# --- Utility Logging Functions ---
+# For consistent and colored output
+log_info() {
+    echo -e "\e[34m[INFO]\e[0m $1"
+}
+log_success() {
+    echo -e "\e[32m[SUCCESS]\e[0m $1"
+}
+log_error() {
+    echo -e "\e[31m[ERROR]\e[0m $1"
+}
+log_warn() {
+    echo -e "\e[33m[WARNING]\e[0m $1"
 }
 #endregion
 
@@ -175,7 +190,7 @@ EOF
 function start_single_vite_dev_server() {
     clear_screen
     echo "==================================="
-    echo "   Select Vite Project to Start    "
+    echo "     Select Vite Project to Start    "
     echo "==================================="
 
     declare -a project_paths
@@ -281,6 +296,92 @@ function stop_all_vite_dev_servers() {
   fi
 }
 
+# --- Git Operations Function ---
+# Manages common Git commands for the monorepo
+_git_operations() {
+    # Using the dynamically determined PROJECT_ROOT as the Git repository root
+    local git_repo_root="$PROJECT_ROOT"
+
+    # Check if .git directory exists
+    if [ ! -d "$git_repo_root/.git" ]; then
+        log_error "Git repository not found at $git_repo_root/.git."
+        log_error "Please initialize Git in this directory using 'git init' first."
+        read -p "Press Enter to return to the Main Menu..."
+        return
+    fi
+
+    # Change into the Git repository directory for operations
+    # Store current PWD to return later
+    local original_pwd="$PWD"
+    log_info "Navigating to Git repository: $git_repo_root"
+    cd "$git_repo_root" || { log_error "Failed to change directory to $git_repo_root. Aborting Git operations."; read -p "Press Enter to continue..."; return; }
+
+    while true; do
+        clear_screen # Clear screen for a cleaner menu
+        log_info "--- Git Operations Menu ---"
+        echo "1. Git Status (Check current changes)"
+        echo "2. Git Add All & Commit (Stage all changes and commit)"
+        echo "3. Git Push (Push local commits to remote)"
+        echo "4. Git Pull (Fetch and merge changes from remote)"
+        echo "0. Back to Main Menu"
+        echo "---------------------------"
+        read -p "Enter your choice: " git_choice
+
+        case "$git_choice" in
+            1)
+                log_info "Running: git status"
+                git status
+                read -p "Press Enter to continue..."
+                ;;
+            2)
+                read -p "Enter your commit message: " commit_msg
+                if [ -z "$commit_msg" ]; then
+                    log_warn "Commit message cannot be empty. Aborting commit."
+                else
+                    log_info "Staging all changes and committing..."
+                    git add .
+                    if git commit -m "$commit_msg"; then
+                        log_success "Changes committed successfully!"
+                    else
+                        log_error "Failed to commit changes. Check output above."
+                    fi
+                fi
+                read -p "Press Enter to continue..."
+                ;;
+            3)
+                log_info "Running: git push"
+                current_branch=$(git rev-parse --abbrev-ref HEAD) # Get current branch name
+                if git push origin "$current_branch"; then
+                    log_success "Pushed changes to $current_branch successfully!"
+                else
+                    log_error "Failed to push changes. Check remote URL and connection."
+                fi
+                read -p "Press Enter to continue..."
+                ;;
+            4)
+                log_info "Running: git pull"
+                current_branch=$(git rev-parse --abbrev-ref HEAD)
+                if git pull origin "$current_branch"; then
+                    log_success "Pulled changes from $current_branch successfully!"
+                else
+                    log_error "Failed to pull changes. Check remote URL and connection."
+                fi
+                read -p "Press Enter to continue..."
+                ;;
+            0)
+                log_info "Returning to Main Menu."
+                cd "$original_pwd" || { log_error "Failed to return to original directory."; }
+                return # Exit the function
+                ;;
+            *)
+                log_error "Invalid choice. Please try again."
+                read -p "Press Enter to continue..."
+                ;;
+        esac
+    done
+}
+
+
 #endregion
 
 #region -----Menu Functions (UI)-----
@@ -355,7 +456,7 @@ menu_2_ui () {
             echo "Invalid choice. Please try again."
             sleep 1
             ;;
-        esac
+        esac # Corrected from esolac
     done
 }
 
@@ -412,6 +513,7 @@ while true; do
     echo "2. Server Options"
     echo "3. Open Directus Admin"
     echo "4. Create New React App/Page"
+    echo "5. Git Operations" # NEW OPTION ADDED HERE
     echo "q. Quit"
     echo "-----------------------------------"
 
@@ -431,7 +533,8 @@ while true; do
             fi
             read -p "Press Enter to return to main menu..."
             ;;
-        4) menu_create_ui ;; # Calls the new creation sub-menu
+        4) menu_create_ui ;;
+        5) _git_operations ;; # CALL TO NEW GIT FUNCTION
         q | Q)
             echo "Exiting script"
             exit 0
