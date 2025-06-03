@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wade USA Dark Palette</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1A1A1A; /* Primary Background */
+            color: #E0E0E0; /* Primary Text */
+        }
+        .color-swatch {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .color-box {
+            width: 150px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .color-box.bg-primary { background-color: #1A1A1A; color: #E0E0E0; }
+        .color-box.bg-secondary { background-color: #2B2B2B; color: #E0E0E0; }
+        .color-box.bg-tertiary { background-color: #3C3C3C; color: #E0E0E0; }
+        .color-box.text-primary { background-color: #E0E0E0; color: #1A1A1A; } /* Showing text color on its own background */
+        .color-box.text-secondary { background-color: #B0B0B0; color: #1A1A1A; }
+        .color-box.text-headings { background-color: #F0F0F0; color: #1A1A1A; }
+        .color-box.accent-primary { background-color: #00C8C8; color: #1A1A1A; font-weight: bold; }
+        .color-box.accent-secondary { background-color: #6C7EE1; color: #1A1A1A; font-weight: bold; }
+        .color-box.status-success { background-color: #28A745; color: #E0E0E0; }
+        .color-box.status-danger { background-color: #DC3545; color: #E0E0E0; }
+        .color-box.status-warning { background-color: #FFC107; color: #1A1A1A; } /* Text color adjusted for contrast */
+        .color-box.status-info { background-color: #17A2B8; color: #E0E0E0; }
+
+        .label { font-size: 0.8em; margin-bottom: 5px; }
+        .hex { font-size: 0.9em; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Wade USA Dark Theme Color Palette</h1>
+    <div class="color-swatch">
+        <div class="color-box bg-primary"><div class="label">Primary Background</div><div class="hex">#1A1A1A</div></div>
+        <div class="color-box bg-secondary"><div class="label">Secondary Background</div><div class="hex">#2B2B2B</div></div>
+        <div class="color-box bg-tertiary"><div class="label">Tertiary Background</div><div class="hex">#3C3C3C</div></div>
+
+        <div class="color-box text-primary"><div class="label">Primary Text</div><div class="hex">#E0E0E0</div></div>
+        <div class="color-box text-secondary"><div class="label">Secondary Text</div><div class="hex">#B0B0B0</div></div>
+        <div class="color-box text-headings"><div class="label">Headings/Strong Text</div><div class="hex">#F0F0F0</div></div>
+
+        <div class="color-box accent-primary"><div class="label">Primary Accent</div><div class="hex">#00C8C8</div></div>
+        <div class="color-box accent-secondary"><div class="label">Secondary Accent</div><div class="hex">#6C7EE1</div></div>
+
+        <div class="color-box status-success"><div class="label">Success</div><div class="hex">#28A745</div></div>
+        <div class="color-box status-danger"><div class="label">Danger/Error</div><div class="hex">#DC3545</div></div>
+        <div class="color-box status-warning"><div class="label">Warning</div><div class="hex">#FFC107</div></div>
+        <div class="color-box status-info"><div class="label">Info</div><div class="hex">#17A2B8</div></div>
+    </div>
+</body>
+</html>

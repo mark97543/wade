@@ -1,0 +1,232 @@
+/* File: wade/_components/styles/_theme.css */
+
+/*
+|--------------------------------------------------------------------------
+| Global CSS Variables & Foundational Styles for Wade USA Projects
+|--------------------------------------------------------------------------
+|
+| This file defines the core visual language for all Vite projects
+| within the Wade USA monorepo. It uses CSS Custom Properties
+| to enable easy maintenance and consistent theming.
+|
+*/
+
+/* -------------------------------------------------------------------------- */
+/* 1. CSS Resets & Base Utilities                                           */
+/* -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box; /* Universal box-sizing */
+}
+
+html {
+    -webkit-text-size-adjust: 100%; /* Prevent font scaling on iOS */
+}
+
+html, body {
+    margin: 0; /* Remove default browser margin */
+    padding: 0; /* Remove default browser padding */
+    /* Other global body styles like font-family, color, background-color */
+    line-height: var(--line-height-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    line-height: var(--line-height-base);
+    -webkit-font-smoothing: antialiased; /* Better font rendering */
+    -moz-osx-font-smoothing: grayscale; /* Better font rendering */
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Color Palette (Your Finalized Dark Theme)                             */
+/* -------------------------------------------------------------------------- */
+:root {
+    
+    /* --- Backgrounds --- */
+    --color-bg-primary: #1A1A1A; /* Deepest Dark */
+    --color-bg-secondary: #2B2B2B; /* Charcoal Gray */
+    --color-bg-tertiary: #3C3C3C; /* Dark Slate */
+
+    /* --- Text Colors --- */
+    --color-text-primary: #E0E0E0; /* Light Gray */
+    --color-text-secondary: #B0B0B0; /* Medium Gray */
+    --color-text-headings: #F0F0F0; /* Near White */
+
+    /* --- Accents & Interactive --- */
+    --color-accent-primary: #00C8C8; /* Vibrant Teal/Aqua */
+    --color-accent-secondary: #6C7EE1; /* Muted Blue/Violet */
+    --color-accent-tertiary-olive: #5F6B5C; /* Deep Olive */
+
+    /* --- Status & Feedback --- */
+    --color-status-success: #28A745; /* Vibrant Green */
+    --color-status-danger: #DC3545; /* Muted Red */
+    --color-status-warning: #FFC107; /* Warm Orange/Yellow */
+    --color-status-info: #17A2B8; /* Soft Blue */
+
+    /* --- Utility Colors for Contrast (Used internally for text on specific backgrounds) --- */
+    --color-text-on-light: #1A1A1A; /* For text on bright/light elements like buttons */
+    --color-text-on-dark: #E0E0E0;  /* For text on dark elements like backgrounds */
+
+
+
+    /* -------------------------------------------------------------------------- */
+    /* 3. Typography Variables                                                  */
+    /* -------------------------------------------------------------------------- */
+    --font-family-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-family-serif: 'Georgia', serif; /* Example for specific use cases */
+    --font-family-mono: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; /* Example for code */
+
+    --font-size-base: 1rem;    /* 16px default */
+    --font-size-sm: 0.875rem;  /* 14px */
+    --font-size-md: 1.125rem;  /* 18px */
+    --font-size-lg: 1.25rem;   /* 20px */
+    --font-size-xl: 1.5rem;    /* 24px */
+    --font-size-2xl: 2rem;     /* 32px */
+    --font-size-3xl: 3rem;     /* 48px */
+
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --line-height-base: 1.6;
+    --line-height-heading: 1.2;
+
+
+
+
+    /* -------------------------------------------------------------------------- */
+    /* 4. Spacing Variables                                                     */
+    /* -------------------------------------------------------------------------- */
+    --space-xxs: 4px;
+    --space-xs: 8px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-xxl: 48px;
+    --space-3xl: 64px;
+
+    /* -------------------------------------------------------------------------- */
+    /* 5. Border Radii & Borders                                                */
+    /* -------------------------------------------------------------------------- */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-circle: 50%;
+
+    --border-width-base: 1px;
+    --border-color-base: var(--color-bg-tertiary);
+
+    /* -------------------------------------------------------------------------- */
+    /* 6. Shadows                                                               */
+    /* -------------------------------------------------------------------------- */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.2);
+
+
+    /* -------------------------------------------------------------------------- */
+    /* 7. Breakpoints for Responsiveness                                        */
+    /* -------------------------------------------------------------------------- */
+    --breakpoint-sm: 640px;  /* Mobile devices */
+    --breakpoint-md: 768px;  /* Tablets */
+    --breakpoint-lg: 1024px; /* Small laptops */
+    --breakpoint-xl: 1280px; /* Desktops */
+    --breakpoint-2xl: 1536px;/* Large monitors */
+
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* 8. Optional: Base Styles applied globally (Example)                      */
+/* -------------------------------------------------------------------------- */
+
+/* Apply global theme colors and fonts to body */
+body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-sans); /* Headings can use the same or a different font */
+    color: var(--color-text-headings);
+    line-height: var(--line-height-heading);
+    font-weight: var(--font-weight-semibold);
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+}
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+h5 { font-size: var(--font-size-md); }
+h6 { font-size: var(--font-size-base); }
+
+
+/* Links */
+a {
+    color: var(--color-accent-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--color-accent-secondary); /* Hover with secondary accent */
+}
+
+/* Buttons (Example) */
+button {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-light);
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+}
+button:hover {
+    background-color: var(--color-accent-secondary);
+}
+
+/* Input Fields (Example) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    background-color: var(--color-bg-tertiary);
+    border: var(--border-width-base) solid var(--border-color-base);
+    color: var(--color-text-primary);
+    padding: var(--space-sm);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-base);
+}
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-accent-primary), 0.3);
+}
+
+/* Utility Classes (Example) */
+.text-center { text-align: center; }
+.m-md { margin: var(--space-md); }
+.p-lg { padding: var(--space-lg); }
+
+/* Formattign for all app wrappers */
+
+.wrapper{
+    margin-top: 80px; /*This prevents loading under the header */
+}

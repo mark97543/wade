@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wade USA Dark Theme Palette with Olive</title>
+    <style>
+        :root {
+            /* Backgrounds */
+            --color-bg-primary: #1A1A1A; /* Deepest Dark */
+            --color-bg-secondary: #2B2B2B; /* Charcoal Gray */
+            --color-bg-tertiary: #3C3C3C; /* Dark Slate */
+
+            /* Text Colors */
+            --color-text-primary: #E0E0E0; /* Light Gray */
+            --color-text-secondary: #B0B0B0; /* Medium Gray */
+            --color-text-headings: #F0F0F0; /* Near White */
+
+            /* Accents */
+            --color-accent-primary: #00C8C8; /* Vibrant Teal/Aqua */
+            --color-accent-secondary: #6C7EE1; /* Muted Blue/Violet */
+            --color-accent-tertiary-olive: #5F6B5C; /* Deep Olive */
+
+            /* Status */
+            --color-status-success: #28A745; /* Vibrant Green */
+            --color-status-danger: #DC3545; /* Muted Red */
+            --color-status-warning: #FFC107; /* Warm Orange/Yellow */
+            --color-status-info: #17A2B8; /* Soft Blue */
+
+            /* Common text color for contrasting on lighter boxes */
+            --color-text-on-light: #1A1A1A; /* Dark text for use on bright colors */
+            --color-text-on-dark: #E0E0E0; /* Light text for use on dark backgrounds */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--color-bg-primary); /* Primary Background */
+            color: var(--color-text-primary);
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: var(--color-text-headings);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .palette-section {
+            background-color: var(--color-bg-secondary); /* Secondary Background */
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-title {
+            color: var(--color-text-headings);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--color-bg-tertiary); /* Tertiary Background for divider */
+            padding-bottom: 10px;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .color-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 120px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05); /* Subtle border for definition */
+        }
+
+        .color-label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .color-hex {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        /* ----- Specific Color Box Styles for Label/Hex Color based on box background ----- */
+        /* For dark backgrounds, use light text */
+        .bg-primary, .bg-secondary, .bg-tertiary,
+        .accent-secondary, /* Muted Blue/Violet */
+        .accent-tertiary-olive, /* Deep Olive */
+        .status-danger { /* Muted Red */
+            color: var(--color-text-on-dark);
+        }
+
+        /* For lighter backgrounds (text colors displayed as boxes, and bright accents/status), use dark text */
+        .text-primary-display, .text-secondary-display, .text-headings-display,
+        .accent-primary, /* Vibrant Teal/Aqua */
+        .status-success, /* Vibrant Green */
+        .status-warning, /* Warm Orange/Yellow */
+        .status-info { /* Soft Blue */
+            color: var(--color-text-on-light);
+        }
+    </style>
+</head>
+<body>
+    <h1>Wade USA Dark Theme Palette with Olive Green</h1>
+
+    <div class="palette-section">
+        <h2 class="section-title">Backgrounds & Base</h2>
+        <div class="color-grid">
+            <div class="color-box bg-primary" style="background-color: var(--color-bg-primary);">
+                <div class="color-label">Primary Background</div>
+                <div class="color-hex">#1A1A1A</div>
+            </div>
+            <div class="color-box bg-secondary" style="background-color: var(--color-bg-secondary);">
+                <div class="color-label">Secondary Background / Surface</div>
+                <div class="color-hex">#2B2B2B</div>
+            </div>
+            <div class="color-box bg-tertiary" style="background-color: var(--color-bg-tertiary);">
+                <div class="color-label">Tertiary Background / Divider</div>
+                <div class="color-hex">#3C3C3C</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="palette-section">
+        <h2 class="section-title">Text Colors</h2>
+        <div class="color-grid">
+            <div class="color-box text-primary-display" style="background-color: var(--color-text-primary);">
+                <div class="color-label">Primary Text</div>
+                <div class="color-hex">#E0E0E0</div>
+            </div>
+            <div class="color-box text-secondary-display" style="background-color: var(--color-text-secondary);">
+                <div class="color-label">Secondary Text</div>
+                <div class="color-hex">#B0B0B0</div>
+            </div>
+            <div class="color-box text-headings-display" style="background-color: var(--color-text-headings);">
+                <div class="color-label">Headings / Strong Text</div>
+                <div class="color-hex">#F0F0F0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="palette-section">
+        <h2 class="section-title">Accents & Interactive</h2>
+        <div class="color-grid">
+            <div class="color-box accent-primary" style="background-color: var(--color-accent-primary);">
+                <div class="color-label">Primary Accent / Interactive</div>
+                <div class="color-hex">#00C8C8</div>
+            </div>
+            <div class="color-box accent-secondary" style="background-color: var(--color-accent-secondary);">
+                <div class="color-label">Secondary Accent / Subtle</div>
+                <div class="color-hex">#6C7EE1</div>
+            </div>
+            <div class="color-box accent-tertiary-olive" style="background-color: var(--color-accent-tertiary-olive);">
+                <div class="color-label">Tertiary Accent / Deep Olive</div>
+                <div class="color-hex">#5F6B5C</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="palette-section">
+        <h2 class="section-title">Status & Feedback</h2>
+        <div class="color-grid">
+            <div class="color-box status-success" style="background-color: var(--color-status-success);">
+                <div class="color-label">Success</div>
+                <div class="color-hex">#28A745</div>
+            </div>
+            <div class="color-box status-danger" style="background-color: var(--color-status-danger);">
+                <div class="color-label">Danger / Error</div>
+                <div class="color-hex">#DC3545</div>
+            </div>
+            <div class="color-box status-warning" style="background-color: var(--color-status-warning);">
+                <div class="color-label">Warning</div>
+                <div class="color-hex">#FFC107</div>
+            </div>
+            <div class="color-box status-info" style="background-color: var(--color-status-info);">
+                <div class="color-label">Info</div>
+                <div class="color-hex">#17A2B8</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+/* Imports */
+@import '../styles/theme.css';
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Tangerine:wght@400;700&display=swap'); /* This is for Logo Font */
+
+
+/* Header Elements */
+.header_container{
+
+    /* Header Declared Variables */
+    --header-height:60px;
+
+    background-color: var(--color-bg-secondary);
+    width: 98%;
+    height: var(--header-height);
+    border-radius: calc(var(--header-height)/2);
+    margin-top: 5px;
+
+
+    /* --- Add these for fixed positioning --- */
+    position: fixed; /* Makes the header stick to the viewport */
+    top: 0;          /* Positions it at the very top of the viewport */
+    left: 50%;       /* Move the left edge to the horizontal center of the viewport */
+    transform: translateX(-50%); /* Pull the element back by half of its own width to truly center it */
+    z-index: 1000;   /* Ensures it stays on top of other content if elements overlap */
+
+    /* Example border to show it's rounded */
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+.header_logo{
+    font-family: 'Tangerine', sans-serif;
+    font-size: 35px;
+    font-weight: 700;
+    text-shadow: 4px 4px 4px #aaa;
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.header_logo > a {
+    color: var(--color-text-primary);
+
+}
+
+
+
+
