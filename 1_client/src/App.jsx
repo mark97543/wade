@@ -3,6 +3,7 @@ import './App.css'
 import Header from '@wade-usa/components/header/header.jsx'
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import Page404 from './pages/404 page/404NotFound';
+import Home from './pages/Home/Home';
 
 function App() {
 
@@ -11,7 +12,7 @@ function App() {
       <Header/>
       <Router>
         <Routes>
-          
+          <Route path='/' element={<Home/>}/>
           <Route path='/*' element={<Page404/>}/> {/* 404 Page for all pages that do not exist*/}
         </Routes>
       </Router>

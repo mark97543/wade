@@ -5,7 +5,7 @@ const Header = ({ message = "Hello from header!" }) => {
   return (
     <header className='header_container'>
       <div className='header_logo'>
-        <a href='#'>M+S </a>
+        <a href='/'>M+S </a> {/* TODO: Need this to go to dashboard if logged in*/}
       </div>
 
 

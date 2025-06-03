@@ -1,0 +1,17 @@
+.home_wrapper{
+    text-align: center;
+}
+
+
+
+.Home_video{
+    max-width: 800px;
+    min-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.Home_video > * {
+    border-radius: 15px;
+}
+
