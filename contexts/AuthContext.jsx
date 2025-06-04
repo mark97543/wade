@@ -1,9 +1,8 @@
 // /home/mark/Documents/wade/contexts/AuthContext.jsx
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { Directus } from '@directus/sdk'; //
-
-const directus = new Directus(import.meta.env.VITE_DIRECTUS_URL);
+import { createDirectus } from '@directus/sdk'; // Import the factory function
+const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL); // Use the factory function
 
 export const AuthContext = createContext(null);
 
