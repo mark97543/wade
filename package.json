@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@directus/sdk": "^19.1.0"
+  }
+}

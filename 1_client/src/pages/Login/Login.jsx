@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import './Login.css'
-import { createDirectus } from '@directus/sdk'; // Import the factory function
-import { useAuth } from '@wade-usa/contexts/AuthContext'; // NEW: Use the alias for shared context
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+import './Login.css';
+import { createDirectus } from '@directus/sdk'; // Keep this import
+import { useAuth } from '@wade-usa/contexts/AuthContext';
+import { useNavigate } from "react-router-dom";
 
 
-
-const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL); // Use the factory function
+const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL);
+console.log('Login: Directus client initialized (after createDirectus) =', directus);
 
 
 

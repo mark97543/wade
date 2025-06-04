@@ -9,8 +9,8 @@ export default defineConfig({
   resolve:{
     alias: {
       '@wade-usa/components': path.resolve(__dirname, '../_components'),
-      '@wade-usa/contexts': path.resolve(__dirname, '../contexts'), // Points to wade/contexts
+      '@wade-usa/contexts': path.resolve(__dirname, '../contexts'),
     }
   },
-  // REMOVE optimizeDeps.exclude if it was here
+  // The optimizeDeps block should be removed from here
 })
