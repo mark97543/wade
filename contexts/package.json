@@ -1,0 +1,6 @@
+{
+  "name": "@wade-usa/contexts",
+  "version": "0.0.0",
+  "private": true,
+  "main": "AuthContext.jsx" 
+}
