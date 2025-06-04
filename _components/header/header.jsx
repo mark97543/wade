@@ -11,12 +11,14 @@ const Header = ({ message = "Hello from header!" }) => {
 
 
   const handleLoginClick = () => {
-    navigate('/login'); 
+    //navigate('/login');
+    window.location.href ='/login' 
   };
 
   const handleLogout = ()=>{
     logout()
-    navigate('/login'); 
+    //navigate('/login');
+    window.location.href = '/goodbye'  
   }
 
   return (

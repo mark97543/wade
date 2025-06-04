@@ -1,0 +1,14 @@
+.goodbye_wrapper>h2{
+    text-align: center;
+}
+
+.goodbye_video{
+    width: 98%;
+    min-width: 400px;
+    max-width: 800px;
+    margin: 30px auto auto auto;
+}
+
+.goodbye_video > video{
+    border-radius: 15px;
+}

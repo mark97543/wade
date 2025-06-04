@@ -7,6 +7,8 @@ import Home from './pages/Home/Home';
 import Docker from './pages/Dock/Docker';
 import Login from './pages/Login/Login';
 import { AuthProvider } from '@wade-usa/contexts/AuthContext'; // NEW: Use the alias for shared context
+import ProtectedRoute from '@wade-usa/components/ProtectedRoute/ProtectedRoute.jsx'
+import Goodbye from './pages/Goodbye/Goodbye';
 
 
 
@@ -20,9 +22,15 @@ function App() {
           <Header/>
           <Routes>
             <Route path='/' element={<Home/>}/>
-            <Route path = '/dock' element={<Docker/>}/>
             <Route path='/login' element={<Login/>}/>
+            <Route path='/goodbye' element={<Goodbye/>}/>
             <Route path='/*' element={<Page404/>}/> 
+
+            {/* Protected Routes*/}
+
+            <Route path = '/dock' element={<ProtectedRoute><Docker/></ProtectedRoute>}/>
+
+
           </Routes>
         </AuthProvider>
       </Router>
