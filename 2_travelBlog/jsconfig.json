@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@wade-usa/components/*": ["../_components/*"] // THIS PATH IS CORRECT for your specified structure
+    },
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

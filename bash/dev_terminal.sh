@@ -23,17 +23,10 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR_MAIN")" # Assumes script is in a direct chi
 PROJECT_DIR="$PROJECT_ROOT" # This is the main project directory containing 1_client, _components etc.
 
 # Default values for network settings - these can be overridden by .env
-REMOTE_USER="mark"
-REMOTE_SERVER_IP="159.223.207.34"
 DIRECTUS_ADMIN_URL="https://api.wade-usa.com"
 DEFAULT_VITE_URL="http://localhost:5173" # Default URL for a Vite dev server
 
-# Command to be run in a new terminal for SSH.
-# Note: Using single quotes for SSH_COMMAND_FOR_NEW_TERMINAL to preserve special characters for bash -c
-SSH_COMMAND_FOR_NEW_TERMINAL="echo 'Attempting SSH to ${REMOTE_USER}@${REMOTE_SERVER_IP}...'; ssh ${REMOTE_USER}@${REMOTE_SERVER_IP}; echo 'SSH session ended. This terminal will remain open.'; exec /bin/bash"
-
 # No need to export these global constants explicitly if they are only used within this single script.
-# If you plan to break this script into smaller pieces later, re-evaluate exports.
 #endregion
 
 #region -----.env import-----
@@ -179,8 +172,6 @@ EOF
 }
 EOF
 
-  # Removed the index.js creation block as requested
-
   echo "Shared component '$component_name' created successfully."
   echo "You can now import it like: import ${component_name} from '@your_project_alias/_components/${component_name}';"
   echo "Remember to configure path aliases in your Vite configs if you haven't already."
@@ -255,7 +246,8 @@ function start_single_vite_dev_server() {
             
             # --- Open in Google Chrome ---
             echo "Waiting a few seconds for the dev server to potentially start..."
-            sleep 5 # Adjust this delay if your server takes longer/shorter to start
+            sleep 2 # MODIFIED: Reduced from 5. Adjust if your server takes longer/shorter.
+                    # This delay helps ensure Chrome doesn't open before the server is ready.
 
             echo "Attempting to open $DEFAULT_VITE_URL in Google Chrome..."
             google-chrome "$DEFAULT_VITE_URL" &
@@ -380,8 +372,6 @@ _git_operations() {
         esac
     done
 }
-
-
 #endregion
 
 #region -----Menu Functions (UI)-----
@@ -409,54 +399,14 @@ menu_1_ui (){
             # Removed case 3 for "Stop ALL running Vite Dev Servers"
             0)
                 echo "Returning to Main Menu"
-                sleep 1
+                # MODIFIED: Removed sleep 1
                 break
                 ;;
             *)
                 echo "Invalid choice. Please try again."
-                sleep 1
+                # MODIFIED: Removed sleep 1
                 ;;
         esac
-    done
-}
-
-# Menu for Server Options (SSH)
-menu_2_ui () {
-    while true; do
-        clear_screen
-        echo "==================================="
-        echo "     WadeUSA - Server Options      "
-        echo "==================================="
-        echo "-----------------------------------"
-        echo "1. SSH into Server ('${REMOTE_USER}@${REMOTE_SERVER_IP}') (New Terminal)"
-        echo "0. Return to Main Menu"
-        echo "-----------------------------------"
-
-        read -p "Enter your choice: " user_choice
-        echo
-
-        case $user_choice in
-            1)
-                if [[ -n "$REMOTE_USER" && -n "$REMOTE_SERVER_IP" ]]; then
-                    echo "Opening new terminal for SSH connection..."
-                    gnome-terminal -- /bin/bash -c "${SSH_COMMAND_FOR_NEW_TERMINAL}" & # Run in background
-                    echo "New terminal window was launched."
-                    read -p "Press Enter to return to menu..."
-                else
-                    echo "Error: REMOTE_USER or REMOTE_SERVER_IP not configured in script or .env."
-                    sleep 2
-                fi
-                ;;
-            0)
-            echo "Returning to Main Menu"
-            sleep 1
-            break
-            ;;
-            *)
-            echo "Invalid choice. Please try again."
-            sleep 1
-            ;;
-        esac # Corrected from esolac
     done
 }
 
@@ -488,12 +438,12 @@ menu_create_ui() {
                 ;;
             0)
                 echo "Returning to Main Menu."
-                sleep 1
+                # MODIFIED: Removed sleep 1
                 break
                 ;;
             *)
                 echo "Invalid choice. Please try again."
-                sleep 1
+                # MODIFIED: Removed sleep 1
                 ;;
         esac
     done
@@ -510,10 +460,10 @@ while true; do
     date # This will print the current date/time
 
     echo "1. VS Code Options (Main Project)"
-    echo "2. Server Options"
-    echo "3. Open Directus Admin"
-    echo "4. Create New React App/Page"
-    echo "5. Git Operations" # NEW OPTION ADDED HERE
+    # MODIFIED: Removed "2. Server Options"
+    echo "2. Open Directus Admin" # MODIFIED: Was 3
+    echo "3. Create New React App/Page" # MODIFIED: Was 4
+    echo "4. Git Operations" # MODIFIED: Was 5
     echo "q. Quit"
     echo "-----------------------------------"
 
@@ -522,8 +472,8 @@ while true; do
 
     case $user_choice in
         1) menu_1_ui ;;
-        2) menu_2_ui ;;
-        3)
+        # MODIFIED: Removed case for menu_2_ui
+        2) # MODIFIED: Was 3
             if [[ -n "$DIRECTUS_ADMIN_URL" ]]; then
                 echo "Opening Directus Admin (${DIRECTUS_ADMIN_URL}) in browser..."
                 xdg-open "${DIRECTUS_ADMIN_URL}" & # xdg-open for Linux, 'open' for macOS, 'start' for Windows (if using WSL)
@@ -533,15 +483,15 @@ while true; do
             fi
             read -p "Press Enter to return to main menu..."
             ;;
-        4) menu_create_ui ;;
-        5) _git_operations ;; # CALL TO NEW GIT FUNCTION
+        3) menu_create_ui ;; # MODIFIED: Was 4
+        4) _git_operations ;; # MODIFIED: Was 5
         q | Q)
             echo "Exiting script"
             exit 0
             ;;
         *)
             echo "Invalid choice. Please try again."
-            sleep 1
+            # MODIFIED: Removed sleep 1
             ;;
     esac
 done

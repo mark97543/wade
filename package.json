@@ -5,7 +5,8 @@
   "workspaces": [
     "1_client",
     "_components",        
-    "contexts"            
+    "contexts",
+    "2_travelBlog"            
   ],
   "scripts": {
     "dev:client": "npm run dev --workspace=1_client",
