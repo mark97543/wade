@@ -15,7 +15,7 @@ function Home() {
                 muted
                 playsInline
             >
-                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/71e3f609-cb60-4cb2-918e-17f58a7da41c.mp4' type="video/mp4" />
+                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/ec572f28-eedc-4d61-b9aa-50dfe57fb63e.mp4' type="video/mp4" />
                 Your browser does not support the video tag. Please update your browser.
             </video>
         </div>

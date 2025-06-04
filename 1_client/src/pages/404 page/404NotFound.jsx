@@ -19,7 +19,7 @@ const Page404 = ()=>{
                         muted
                         playsInline
                     >
-                        <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/5907755f-aee4-48cf-8571-8dfae92be9e6.mp4' type="video/mp4" />
+                        <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com//31f10c93-c1f4-4f7f-b821-f60d628d18d8.mp4' type="video/mp4" />
                         Your browser does not support the video tag. Please update your browser.
                     </video>
             </div>
