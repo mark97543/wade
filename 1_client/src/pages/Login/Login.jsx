@@ -23,8 +23,8 @@ function Login() {
     // Effect to redirect if already logged in or if login succeeds
     useEffect(() => {
         if (isLoggedIn) {
-            //navigate('/'); // Redirect to home page or dashboard upon successful login
-            window.location.href=('/dock')
+            navigate('/dock'); // Redirect to home page or dashboard upon successful login
+            //window.location.href=('/dock')
         }
     }, [isLoggedIn, navigate]); // Depend on isLoggedIn and navigate
 
