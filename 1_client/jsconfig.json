@@ -1,4 +1,3 @@
-// jsconfig.json (for JavaScript)
 {
   "compilerOptions": {
     "baseUrl": ".",

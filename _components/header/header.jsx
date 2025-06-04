@@ -1,7 +1,24 @@
 import React from 'react';
 import './header.css'; // <-- Added CSS import here!
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '@wade-usa/contexts/AuthContext'; // NEW: Use the alias for shared context
+
 
 const Header = ({ message = "Hello from header!" }) => {
+  
+  const navigate = useNavigate(); 
+  const { isLoggedIn, user, logout } = useAuth();
+
+
+  const handleLoginClick = () => {
+    navigate('/login'); 
+  };
+
+  const handleLogout = ()=>{
+    logout()
+    navigate('/login'); 
+  }
+
   return (
     <header className='header_container'>
       <div className='header_logo'>
@@ -9,7 +26,13 @@ const Header = ({ message = "Hello from header!" }) => {
       </div>
 
       <div className='header_right'>
-        <button className='logout_button'>Log In</button>
+        {isLoggedIn ?(
+          <>
+            <button className='logout_button' onClick={handleLogout}>Logout</button>
+          </>
+        ): (
+          <button className='logout_button' onClick={handleLoginClick}>Login</button>
+        )}
       </div>
 
     </header>
