@@ -16,9 +16,9 @@ const Header = ({ message = "Hello from header!" }) => {
   };
 
   const handleLogout = ()=>{
-    navigate('/goodbye');
-    logout()
     
+    logout()
+    navigate('/goodbye');
     //window.location.href = '/goodbye'  
   }
 
