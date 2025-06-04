@@ -12,9 +12,5 @@ export default defineConfig({
       '@wade-usa/contexts': path.resolve(__dirname, '../contexts'),
     }
   },
-  // --- ADD THIS BLOCK BACK IN ---
-  optimizeDeps: {
-    include: ['react-router-dom'],
-  },
-  // --- END ADDED BLOCK ---
+  // The optimizeDeps block should be removed from here
 })
