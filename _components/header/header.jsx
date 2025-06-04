@@ -8,9 +8,14 @@ const Header = ({ message = "Hello from header!" }) => {
         <a href='/'>M+S </a> {/* TODO: Need this to go to dashboard if logged in*/}
       </div>
 
+      <div className='header_right'>
+        <button className='logout_button'>Log In</button>
+      </div>
 
     </header>
   );
 };
 
 export default Header;
+
+//TODO: Need to use navigate to go to log in screen. 

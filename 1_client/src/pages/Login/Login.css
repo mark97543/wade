@@ -1,0 +1,31 @@
+.login_video{
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 800px;
+}
+
+.login_video > video {
+    border-radius: 15px;
+}
+
+.form_box{
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    margin: 30px auto auto auto;
+    padding: 10px;
+    border: var(--border-width-base) solid var(--border-color-base);
+    border-radius: var(--border-radius-lg);
+    background-color: var(--color-bg-secondary);
+}
+
+.form_box > h3{
+    margin: 0 auto 5px auto;
+}
+
+.login_button_page{
+    margin-top: 10px;
+}
