@@ -16,74 +16,76 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-const checkAuthSession = async () => {
-  try {
-    const accessToken = localStorage.getItem('directus_access_token');
-    const refreshToken = localStorage.getItem('directus_refresh_token');
-
-    if (accessToken && refreshToken) {
+    const checkAuthSession = async () => {
       try {
-        // Directus SDK v19: Use the imported refresh function
-        await refresh(directus);
+        const accessToken = localStorage.getItem('directus_access_token');
+        const refreshToken = localStorage.getItem('directus_refresh_token');
 
-        // Directus SDK v19: Use the imported readMe function
-        const currentUser = await readMe(directus);
-        setUser(currentUser);
+        if (accessToken && refreshToken) {
+          try {
+            // Directus SDK v19: Use the imported refresh function
+            await refresh(directus);
 
-      } catch (refreshError) {
-        console.warn('Access token expired or refresh failed, requiring re-login:', refreshError);
+            // Directus SDK v19: Use the imported readMe function
+            const currentUser = await readMe(directus);
+            setUser(currentUser);
+
+          } catch (refreshError) {
+            console.warn('Access token expired or refresh failed, requiring re-login:', refreshError);
+            localStorage.removeItem('directus_access_token');
+            localStorage.removeItem('directus_refresh_token');
+            setUser(null);
+            setAuthError(refreshError.message || 'Session invalid, please log in again.');
+          }
+        }
+      } catch (error) {
+        console.error('Initial authentication check failed, clearing session:', error);
         localStorage.removeItem('directus_access_token');
         localStorage.removeItem('directus_refresh_token');
         setUser(null);
-        setAuthError(refreshError.message || 'Session invalid, please log in again.');
+        setAuthError(error.message || 'Failed to authenticate session.');
+      } finally {
+        setLoading(false);
       }
-    }
-  } catch (error) {
-    console.error('Initial authentication check failed, clearing session:', error);
-    localStorage.removeItem('directus_access_token');
-    localStorage.removeItem('directus_refresh_token');
-    setUser(null);
-    setAuthError(error.message || 'Failed to authenticate session.');
-  } finally {
-    setLoading(false);
-  }
-};
+    };
     checkAuthSession();
   }, []);
 
-const login = async (email, password) => {
-  setAuthError(null);
-  try {
-    // Directus SDK v19: Use the imported login function
-    const response = await login(directus, { email, password });
-    localStorage.setItem('directus_access_token', response.access_token);
-    localStorage.setItem('directus_refresh_token', response.refresh_token);
-
-    // After login, fetch user details using the imported readMe function
-    const currentUser = await readMe(directus);
-    setUser(currentUser);
-    return true;
-  } catch (error) {
-    console.error('Login failed in AuthContext:', error);
-    const errorMessage = error.errors ? error.errors[0].message : error.message || 'Login failed.';
-    setAuthError(errorMessage);
-    throw new Error(errorMessage);
-  }
-};
-
-const logout = async () => {
-  try {
-    // Directus SDK v19: Use the imported logout function
-    await logout(directus);
-  } catch (error) {
-    console.error('Logout failed with Directus:', error);
-  } finally {
-    localStorage.removeItem('directus_access_token');
-    localStorage.removeItem('directus_refresh_token');
-    setUser(null);
+  // Renamed the local login function to avoid collision
+  const performLogin = async (email, password) => {
     setAuthError(null);
-  }
-};
+    try {
+      // Directus SDK v19: Use the imported login function from SDK
+      const response = await login(directus, { email, password });
+      localStorage.setItem('directus_access_token', response.access_token);
+      localStorage.setItem('directus_refresh_token', response.refresh_token);
+
+      // After login, fetch user details using the imported readMe function
+      const currentUser = await readMe(directus);
+      setUser(currentUser);
+      return true;
+    } catch (error) {
+      console.error('Login failed in AuthContext:', error);
+      const errorMessage = error.errors ? error.errors[0].message : error.message || 'Login failed.';
+      setAuthError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  // Renamed the local logout function to avoid collision
+  const performLogout = async () => {
+    try {
+      // Directus SDK v19: Use the imported logout function from SDK
+      await logout(directus);
+    } catch (error) {
+      console.error('Logout failed with Directus:', error);
+    } finally {
+      localStorage.removeItem('directus_access_token');
+      localStorage.removeItem('directus_refresh_token');
+      setUser(null);
+      setAuthError(null);
+    }
+  };
 
   const authContextValue = {
     user,
@@ -91,8 +93,8 @@ const logout = async () => {
     isLoggedIn: !!user,
     loading,
     authError,
-    login,
-    logout,
+    login: performLogin,   // Expose the renamed login function
+    logout: performLogout, // Expose the renamed logout function
   };
 
   if (loading) {
