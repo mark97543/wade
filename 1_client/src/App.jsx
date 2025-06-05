@@ -16,7 +16,7 @@ function App() {
 
   return (
     <div className='wrapper'>
-      <Router basename='/home'>
+      <Router basename='/'>
         <AuthProvider>
           <Header/>
           <Routes>
