@@ -26,7 +26,12 @@ const Header = ({ message = "Hello from header!" }) => {
   return (
     <header className='header_container'>
       <div className='header_logo'>
-        <Link to='/'>M+S </Link> {/* TODO: Need this to go to dashboard if logged in*/}
+        {isLoggedIn ? (
+           <Link to='/dock'>M+S </Link> 
+        ):(
+           <Link to='/'>M+S </Link> 
+        )}
+
       </div>
 
       <div className='header_right'>
