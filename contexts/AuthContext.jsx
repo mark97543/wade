@@ -1,11 +1,8 @@
-// /home/mark/Documents/wade/contexts/AuthContext.jsx
-
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { createDirectus, login, refresh, logout, readMe } from '@directus/sdk';
+import { createDirectus, login, refresh, logout, readMe, createUsers } from '@directus/sdk';
 
 
 const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL);
-console.log('AuthContext: Directus client initialized (after createDirectus) =', directus);
 
 
 export const AuthContext = createContext(null);
@@ -23,10 +20,7 @@ export const AuthProvider = ({ children }) => {
 
         if (accessToken && refreshToken) {
           try {
-            // Directus SDK v19: Use the imported refresh function
             await refresh(directus);
-
-            // Directus SDK v19: Use the imported readMe function
             const currentUser = await readMe(directus);
             setUser(currentUser);
 
@@ -51,16 +45,13 @@ export const AuthProvider = ({ children }) => {
     checkAuthSession();
   }, []);
 
-  // Renamed the local login function to avoid collision
   const performLogin = async (email, password) => {
     setAuthError(null);
     try {
-      // Directus SDK v19: Use the imported login function from SDK
       const response = await login(directus, { email, password });
       localStorage.setItem('directus_access_token', response.access_token);
       localStorage.setItem('directus_refresh_token', response.refresh_token);
 
-      // After login, fetch user details using the imported readMe function
       const currentUser = await readMe(directus);
       setUser(currentUser);
       return true;
@@ -72,10 +63,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Renamed the local logout function to avoid collision
   const performLogout = async () => {
     try {
-      // Directus SDK v19: Use the imported logout function from SDK
       await logout(directus);
     } catch (error) {
       console.error('Logout failed with Directus:', error);
@@ -86,6 +75,28 @@ export const AuthProvider = ({ children }) => {
       setAuthError(null);
     }
   };
+  
+  const performRegistration = async (userData) => {
+    setAuthError(null);
+    try {
+        const ROLE_ID = '81ce4fc0-85d3-4855-ba46-cc1814812b4a';
+
+        const userToCreate = {
+            ...userData,
+            role: ROLE_ID,
+            status: 'active',
+        };
+
+        await createUsers(directus, [userToCreate]);
+        return true;
+    } catch (error) {
+        console.error('Registration failed in AuthContext:', error);
+        const errorMessage = error.errors ? error.errors[0].message : error.message || 'Registration failed.';
+        setAuthError(errorMessage);
+        throw new Error(errorMessage);
+    }
+  };
+
 
   const authContextValue = {
     user,
@@ -93,8 +104,9 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn: !!user,
     loading,
     authError,
-    login: performLogin,   // Expose the renamed login function
-    logout: performLogout, // Expose the renamed logout function
+    login: performLogin,
+    logout: performLogout,
+    register: performRegistration,
   };
 
   if (loading) {

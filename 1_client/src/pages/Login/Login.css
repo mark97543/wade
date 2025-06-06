@@ -29,3 +29,14 @@
 .login_button_page{
     margin-top: 10px;
 }
+
+.login_Register{
+    display: flex;
+    width: 100%;
+    margin: 10px auto auto auto;
+    justify-content: center;
+}
+
+.login_Register > a {
+    font-style: italic;
+}

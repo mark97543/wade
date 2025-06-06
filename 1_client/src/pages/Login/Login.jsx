@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { createDirectus } from '@directus/sdk'; // Keep this import
 import { useAuth } from '@wade-usa/contexts/AuthContext';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 
 const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL);
-console.log('Login: Directus client initialized (after createDirectus) =', directus);
+//console.log('Login: Directus client initialized (after createDirectus) =', directus);
 
 
 
@@ -72,6 +72,10 @@ function Login() {
             <input type='password' id='login_password' onChange={(e) => setPassword(e.target.value)} required disabled={loading}></input>
             <button type='submit' disabled={loading} className='login_button_page' >{loading ? 'Logging In...' : 'Login'}</button>
         </form>
+
+        <div className='login_Register'>
+            <Link to='/registration'>Register New User</Link>
+        </div>
 
     </div>
   )
