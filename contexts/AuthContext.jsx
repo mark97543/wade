@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { createDirectus, login, refresh, logout, readMe, createUsers } from '@directus/sdk';
 
+console.log('Value of VITE_DIRECTUS_URL is:', import.meta.env.VITE_DIRECTUS_URL);
+
 
 const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL);
 
