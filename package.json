@@ -6,7 +6,8 @@
     "1_client",
     "_components",        
     "contexts",
-    "2_travelBlog"            
+    "2_travelBlog",
+    "directus-backend"            
   ],
   "scripts": {
     "dev:client": "npm run dev --workspace=1_client",

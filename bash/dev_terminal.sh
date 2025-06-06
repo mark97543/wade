@@ -25,8 +25,8 @@ PROJECT_DIR="$PROJECT_ROOT" # This is the main project directory containing 1_cl
 # Default values for network settings - these can be overridden by .env
 DIRECTUS_ADMIN_URL="https://api.wade-usa.com"
 DEFAULT_VITE_URL="http://localhost:5173" # Default URL for a Vite dev server
-
-# No need to export these global constants explicitly if they are only used within this single script.
+SSH_USER="your_user" # Default SSH user
+SSH_HOST="your_server_ip" # Default SSH host
 #endregion
 
 #region -----.env import-----
@@ -68,6 +68,21 @@ log_warn() {
 
 #region -----Core Functionality Functions-----
 
+# --- NEW: Function to SSH into the live server ---
+_ssh_into_server() {
+    if [[ -z "$SSH_USER" || -z "$SSH_HOST" || "$SSH_HOST" == "your_server_ip" ]]; then
+        log_error "SSH user or host not configured."
+        log_warn "Please set SSH_USER and SSH_HOST in your bash/.env file."
+        read -p "Press Enter to return to menu..."
+        return
+    fi
+
+    log_info "Attempting to connect to ${SSH_HOST} as user ${SSH_USER}..."
+    ssh "${SSH_USER}@${SSH_HOST}"
+    log_success "SSH session ended."
+    read -p "Press Enter to return to menu..."
+}
+
 # Function to open VS Code
 open_VS () {
   if [[ -n "$PROJECT_DIR" ]]; then
@@ -87,8 +102,8 @@ open_VS () {
 
 # Function to create a new Vite project
 function create_vite_project() {
-  local project_name=$1 # Passed as argument, or prompted if empty
-  local project_root="$PROJECT_DIR" # Always use the main project root
+  local project_name=$1
+  local project_root="$PROJECT_DIR"
 
   if [ -z "$project_name" ]; then
     read -p "Enter new Vite project name (e.g., 3_anotherModule): " project_name
@@ -99,25 +114,22 @@ function create_vite_project() {
     return 1
   fi
 
-  # Define project_path *after* project_name has been definitively set (either from arg or user input).
   local project_path="$project_root/$project_name"
 
   if [ -d "$project_path" ]; then
-    echo "Error: Project directory '$project_path' already exists." # This error message should now be correct
+    echo "Error: Project directory '$project_path' already exists."
     return 1
   fi
 
   echo "Creating new Vite project '$project_name' at '$project_path'..."
-  # Change directory to the intended parent directory ($PROJECT_DIR)
-  # before running npm create, and pass the *relative* project name.
   (cd "$project_root" && npm create vite@latest "$project_name" -- --template react)
 
   if [ $? -eq 0 ]; then
     echo "Vite project '$project_name' created successfully."
     echo "Installing dependencies..."
-    (cd "$project_path" && npm install) # This should now work as the directory exists correctly.
+    (cd "$project_path" && npm install)
     echo "Dependencies installed."
-    echo "Remember to update your package.json (e.g., pnpm-workspace.yaml if using pnpm workspaces)."
+    echo "Remember to update your package.json workspaces configuration."
   else
     echo "Failed to create Vite project."
   fi
@@ -125,8 +137,8 @@ function create_vite_project() {
 
 # Function to create a new shared component
 function create_shared_component() {
-  local component_name=$1 # Passed as argument, or prompted if empty
-  local components_dir="$PROJECT_DIR/_components" # Assumes _components is directly under PROJECT_DIR
+  local component_name=$1
+  local components_dir="$PROJECT_DIR/_components"
 
   if [ -z "$component_name" ]; then
     read -p "Enter new shared component name (e.g., MyNewButton): " component_name
@@ -147,10 +159,9 @@ function create_shared_component() {
   echo "Creating new shared component '$component_name' at '$component_path'..."
   mkdir -p "$component_path"
 
-  # Create a basic React component file with .jsx extension
   cat <<EOF > "$component_path/$component_name.jsx"
 import React from 'react';
-import './${component_name}.css'; // <-- Added CSS import here!
+import './${component_name}.css';
 
 const ${component_name} = ({ message = "Hello from ${component_name}!" }) => {
   return (
@@ -164,7 +175,6 @@ const ${component_name} = ({ message = "Hello from ${component_name}!" }) => {
 export default ${component_name};
 EOF
 
-  # Create the corresponding .css file (empty or with a comment)
   cat <<EOF > "$component_path/$component_name.css"
 /* Styles for ${component_name} component */
 .your-${component_name}-class {
@@ -173,11 +183,9 @@ EOF
 EOF
 
   echo "Shared component '$component_name' created successfully."
-  echo "You can now import it like: import ${component_name} from '@your_project_alias/_components/${component_name}';"
-  echo "Remember to configure path aliases in your Vite configs if you haven't already."
 }
 
-# Function to start a single Vite dev server and open in Chrome
+# Function to start a single Vite dev server
 function start_single_vite_dev_server() {
     clear_screen
     echo "==================================="
@@ -187,13 +195,9 @@ function start_single_vite_dev_server() {
     declare -a project_paths
     declare -a project_names
 
-    # Loop through subdirectories in the PROJECT_DIR
     for item in "$PROJECT_DIR"/*/; do
-        if [ -d "$item" ]; then # If it's a directory
+        if [ -d "$item" ]; then
             project_name=$(basename "$item")
-            # Check if name matches pattern "number_*" (e.g., 1_client, 02_app)
-            # AND it has a package.json
-            # AND package.json mentions "vite" (basic check for Vite project)
             if [[ "$project_name" =~ ^[0-9]+_.* && -f "${item}package.json" ]]; then
                 if grep -qE '"(dev|start)":.*vite' "${item}package.json"; then
                     project_paths+=("$item")
@@ -205,19 +209,16 @@ function start_single_vite_dev_server() {
 
     if [ ${#project_names[@]} -eq 0 ]; then
         echo "No Vite projects found matching the pattern '[0-9]*_*' with a 'dev' or 'start' script mentioning 'vite'"
-        echo "in '$PROJECT_DIR'."
-        read -n 1 -s -r -p "Press any key to return to Dev Options Menu..."
-        return # Exit this function
+        read -n 1 -s -r -p "Press any key to return..."
+        return
     fi
 
-    echo # Blank line
     echo "Available Vite projects:"
-
     PS3="Select a project to start (or type 'q' to cancel): "
     select selected_project_name in "${project_names[@]}" "Cancel"; do
         if [[ "$REPLY" == "q" || "$selected_project_name" == "Cancel" ]]; then
             echo "Operation cancelled."
-            break # Exit the select loop
+            break
         fi
 
         if [[ -n "$selected_project_name" ]]; then
@@ -229,146 +230,67 @@ function start_single_vite_dev_server() {
                 fi
             done
 
-            if [[ -z "$selected_project_path" ]]; then
-                echo "Error: Could not determine path for '$selected_project_name'."
-                continue # Go back to select prompt
-            fi
-
-            echo "You selected: $selected_project_name (Path: $selected_project_path)"
-            
-            # --- Start Vite Dev Server in New Terminal ---
-            echo "Launching Vite dev server for '$selected_project_name' in a new GNOME Terminal..."
-            # The PID file will be created in the SCRIPT_DIR_MAIN (bash/ folder)
             local pid_file="${SCRIPT_DIR_MAIN}/${selected_project_name}.pid"
-            gnome-terminal --working-directory="${selected_project_path}" --title="${selected_project_name}-ViteDev" -- /bin/bash -c "echo 'Starting Vite dev server (npm run dev)...'; echo 'To stop, close this terminal or use the main script.'; npm run dev; rm -f ${pid_file}; exec /bin/bash" &
-            echo $! > "$pid_file" # Save PID of the gnome-terminal process
-            echo "PID saved for '$selected_project_name' to '$pid_file'."
+            gnome-terminal --working-directory="${selected_project_path}" --title="${selected_project_name}-ViteDev" -- /bin/bash -c "echo 'Starting Vite dev server...'; npm run dev; rm -f ${pid_file}; exec /bin/bash" &
+            echo $! > "$pid_file"
             
-            # --- Open in Google Chrome ---
-            echo "Waiting a few seconds for the dev server to potentially start..."
-            sleep 2 # MODIFIED: Reduced from 5. Adjust if your server takes longer/shorter.
-                    # This delay helps ensure Chrome doesn't open before the server is ready.
-
-            echo "Attempting to open $DEFAULT_VITE_URL in Google Chrome..."
+            echo "Waiting a few seconds for the dev server..."
+            sleep 2
             google-chrome "$DEFAULT_VITE_URL" &
-
-            echo # Blank line
-            echo "Commands to start dev server and open Chrome have been issued."
-            echo "The dev server for '$selected_project_name' should be running in a new terminal window."
-            echo "If Chrome didn't open to the right page, check the port in the new terminal (usually $DEFAULT_VITE_URL)."
-            break # Exit the select loop after successful launch
+            break
         else
-            echo "Invalid selection. Please try again."
+            echo "Invalid selection."
         fi
     done
 }
 
-# Function to stop all running Vite dev servers
-function stop_all_vite_dev_servers() {
-  echo "Attempting to stop all running Vite dev servers..."
-  local pids_found=0
-  for pid_file in "$SCRIPT_DIR_MAIN"/*.pid; do
-    if [ -f "$pid_file" ]; then
-      project_name=$(basename "$pid_file" .pid)
-      pid=$(cat "$pid_file")
-      if ps -p "$pid" > /dev/null; then
-        echo "Stopping Vite dev server for $project_name (PID: $pid)..."
-        kill "$pid" # Kill the gnome-terminal process
-        rm "$pid_file"
-        echo "Server for $project_name stopped."
-        pids_found=$((pids_found+1))
-      else
-        echo "No running process found for $project_name with PID $pid. Removing stale PID file."
-        rm "$pid_file"
-      fi
-    fi
-  done
-  if [ "$pids_found" -eq 0 ]; then
-    echo "No Vite dev servers or stale PID files found."
-  fi
-}
-
 # --- Git Operations Function ---
-# Manages common Git commands for the monorepo
 _git_operations() {
-    # Using the dynamically determined PROJECT_ROOT as the Git repository root
     local git_repo_root="$PROJECT_ROOT"
 
-    # Check if .git directory exists
     if [ ! -d "$git_repo_root/.git" ]; then
         log_error "Git repository not found at $git_repo_root/.git."
-        log_error "Please initialize Git in this directory using 'git init' first."
-        read -p "Press Enter to return to the Main Menu..."
+        read -p "Press Enter to return..."
         return
     fi
 
-    # Change into the Git repository directory for operations
-    # Store current PWD to return later
     local original_pwd="$PWD"
-    log_info "Navigating to Git repository: $git_repo_root"
-    cd "$git_repo_root" || { log_error "Failed to change directory to $git_repo_root. Aborting Git operations."; read -p "Press Enter to continue..."; return; }
+    cd "$git_repo_root" || return
 
     while true; do
-        clear_screen # Clear screen for a cleaner menu
+        clear_screen
         log_info "--- Git Operations Menu ---"
-        echo "1. Git Status (Check current changes)"
-        echo "2. Git Add All & Commit (Stage all changes and commit)"
-        echo "3. Git Push (Push local commits to remote)"
-        echo "4. Git Pull (Fetch and merge changes from remote)"
+        echo "1. Git Status"
+        echo "2. Git Add All & Commit"
+        echo "3. Git Push"
+        echo "4. Git Pull"
         echo "0. Back to Main Menu"
         echo "---------------------------"
         read -p "Enter your choice: " git_choice
 
         case "$git_choice" in
-            1)
-                log_info "Running: git status"
-                git status
-                read -p "Press Enter to continue..."
-                ;;
+            1) git status; read -p "Press Enter...";;
             2)
                 read -p "Enter your commit message: " commit_msg
-                if [ -z "$commit_msg" ]; then
-                    log_warn "Commit message cannot be empty. Aborting commit."
+                if [ -n "$commit_msg" ]; then
+                    git add . && git commit -m "$commit_msg"
                 else
-                    log_info "Staging all changes and committing..."
-                    git add .
-                    if git commit -m "$commit_msg"; then
-                        log_success "Changes committed successfully!"
-                    else
-                        log_error "Failed to commit changes. Check output above."
-                    fi
+                    log_warn "Commit message cannot be empty."
                 fi
-                read -p "Press Enter to continue..."
-                ;;
+                read -p "Press Enter...";;
             3)
-                log_info "Running: git push"
-                current_branch=$(git rev-parse --abbrev-ref HEAD) # Get current branch name
-                if git push origin "$current_branch"; then
-                    log_success "Pushed changes to $current_branch successfully!"
-                else
-                    log_error "Failed to push changes. Check remote URL and connection."
-                fi
-                read -p "Press Enter to continue..."
-                ;;
-            4)
-                log_info "Running: git pull"
                 current_branch=$(git rev-parse --abbrev-ref HEAD)
-                if git pull origin "$current_branch"; then
-                    log_success "Pulled changes from $current_branch successfully!"
-                else
-                    log_error "Failed to pull changes. Check remote URL and connection."
-                fi
-                read -p "Press Enter to continue..."
-                ;;
+                git push origin "$current_branch"
+                read -p "Press Enter...";;
+            4)
+                current_branch=$(git rev-parse --abbrev-ref HEAD)
+                git pull origin "$current_branch"
+                read -p "Press Enter...";;
             0)
-                log_info "Returning to Main Menu."
-                cd "$original_pwd" || { log_error "Failed to return to original directory."; }
-                return # Exit the function
-                ;;
+                cd "$original_pwd"
+                return;;
             *)
-                log_error "Invalid choice. Please try again."
-                read -p "Press Enter to continue..."
-                ;;
+                log_error "Invalid choice."; read -p "Press Enter...";;
         esac
     done
 }
@@ -376,75 +298,42 @@ _git_operations() {
 
 #region -----Menu Functions (UI)-----
 
-# Menu for Developer Options (VS Code, Vite Servers)
 menu_1_ui (){
     while true; do
         clear_screen
         echo "==================================="
         echo "     WadeUSA - Dev Options Menu    "
         echo "==================================="
-        echo "-----------------------------------"
         echo "1. Open Main Project In VS Code"
-        echo "2. Start Vite Project Dev Server (Select & Open)"
-        # Option 3 "Stop ALL running Vite Dev Servers" removed as requested
+        echo "2. Start Vite Project Dev Server"
         echo "0. Return to Main Menu"
         echo "-----------------------------------"
-
         read -p "Enter your choice: " user_choice
-        echo
-
         case $user_choice in
-            1) open_VS ;; # Calls the function
-            2) start_single_vite_dev_server ;; # Calls the new integrated function
-            # Removed case 3 for "Stop ALL running Vite Dev Servers"
-            0)
-                echo "Returning to Main Menu"
-                # MODIFIED: Removed sleep 1
-                break
-                ;;
-            *)
-                echo "Invalid choice. Please try again."
-                # MODIFIED: Removed sleep 1
-                ;;
+            1) open_VS ;;
+            2) start_single_vite_dev_server ;;
+            0) break;;
+            *) echo "Invalid choice.";;
         esac
     done
 }
 
-# Menu for Project Creation
 menu_create_ui() {
     while true; do
         clear_screen
         echo "=========================================="
         echo "  Create New React App/Page/Component "
         echo "=========================================="
-        echo "------------------------------------------"
-        echo "1. Create New Vite Project (e.g., 3_newModule)"
-        echo "2. Create New Shared Component (in _components)"
+        echo "1. Create New Vite Project"
+        echo "2. Create New Shared Component"
         echo "0. Back to Main Menu"
         echo "------------------------------------------"
         read -p "Enter your choice: " create_choice
-        echo
-
         case $create_choice in
-            1) # Create New Vite Project
-                echo "Launching new Vite project creation..."
-                create_vite_project "" # Call function, prompt for name
-                read -p "Press Enter to return to creation menu..."
-                ;;
-            2) # Create New Shared Component
-                echo "Launching new shared component creation..."
-                create_shared_component "" # Call function, prompt for name
-                read -p "Press Enter to return to creation menu..."
-                ;;
-            0)
-                echo "Returning to Main Menu."
-                # MODIFIED: Removed sleep 1
-                break
-                ;;
-            *)
-                echo "Invalid choice. Please try again."
-                # MODIFIED: Removed sleep 1
-                ;;
+            1) create_vite_project ""; read -p "Press Enter...";;
+            2) create_shared_component ""; read -p "Press Enter...";;
+            0) break;;
+            *) echo "Invalid choice.";;
         esac
     done
 }
@@ -457,13 +346,13 @@ while true; do
     echo "==================================="
     echo " WadeUSA Development Script Menu "
     echo "==================================="
-    date # This will print the current date/time
+    date
 
-    echo "1. VS Code Options (Main Project)"
-    # MODIFIED: Removed "2. Server Options"
-    echo "2. Open Directus Admin" # MODIFIED: Was 3
-    echo "3. Create New React App/Page" # MODIFIED: Was 4
-    echo "4. Git Operations" # MODIFIED: Was 5
+    echo "1. VS Code & Dev Server Options"
+    echo "2. Open Directus Admin"
+    echo "3. Create New React App/Page"
+    echo "4. Git Operations"
+    echo "5. SSH into Live Server" # <-- NEW OPTION
     echo "q. Quit"
     echo "-----------------------------------"
 
@@ -472,26 +361,23 @@ while true; do
 
     case $user_choice in
         1) menu_1_ui ;;
-        # MODIFIED: Removed case for menu_2_ui
-        2) # MODIFIED: Was 3
+        2)
             if [[ -n "$DIRECTUS_ADMIN_URL" ]]; then
-                echo "Opening Directus Admin (${DIRECTUS_ADMIN_URL}) in browser..."
-                xdg-open "${DIRECTUS_ADMIN_URL}" & # xdg-open for Linux, 'open' for macOS, 'start' for Windows (if using WSL)
-                echo "Browser launch command issued."
+                xdg-open "${DIRECTUS_ADMIN_URL}" &
             else
-                echo "Error: DIRECTUS_ADMIN_URL not defined in script or .env."
+                echo "Error: DIRECTUS_ADMIN_URL not defined."
             fi
-            read -p "Press Enter to return to main menu..."
+            read -p "Press Enter..."
             ;;
-        3) menu_create_ui ;; # MODIFIED: Was 4
-        4) _git_operations ;; # MODIFIED: Was 5
+        3) menu_create_ui ;;
+        4) _git_operations ;;
+        5) _ssh_into_server ;; # <-- NEW CASE
         q | Q)
             echo "Exiting script"
             exit 0
             ;;
         *)
-            echo "Invalid choice. Please try again."
-            # MODIFIED: Removed sleep 1
+            echo "Invalid choice."
             ;;
     esac
 done

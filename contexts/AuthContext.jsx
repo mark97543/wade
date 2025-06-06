@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }) => {
   
   const performRegistration = async (userData) => {
     setAuthError(null);
+    console.log('3. performRegistration in context has been called with:', userData);
     try {
         const ROLE_ID = '81ce4fc0-85d3-4855-ba46-cc1814812b4a';
 

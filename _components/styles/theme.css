@@ -200,6 +200,10 @@ button:hover {
     background-color: var(--color-accent-secondary);
 }
 
+button:disabled{
+    background-color: var(--color-accent-secondary);
+}
+
 /* Input Fields (Example) */
 input[type="text"],
 input[type="email"],
