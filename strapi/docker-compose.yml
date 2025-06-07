@@ -1,0 +1,47 @@
+
+
+services:
+  strapi:
+    image: node:18-alpine # <--- CORRECTED IMAGE
+    container_name: strapi-app
+    ports:
+      - "1337:1337" # Strapi's default port
+    volumes:
+      - ./app:/srv/app # Persistent storage for Strapi project files
+      - ./uploads:/srv/app/public/uploads # Persistent storage for uploaded media
+    working_dir: /srv/app # <--- ADD THIS LINE
+    command: npm run develop # <--- ADD THIS LINE to explicitly start Strapi
+    environment:
+      # Database Configuration
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi_user
+      DATABASE_PASSWORD: YF3bJ7M5 # <--- IMPORTANT: SET A STRONG, UNIQUE PASSWORD HERE!
+      # Strapi App & Security Keys (Crucial for JWT, encryption, etc.)
+      APP_KEYS: vjt0ATskSYXXLYYi5lDuN+jG/QF2DWVPNszrKC/tnG4= # <--- IMPORTANT: Generate a comma-separated list of random keys (e.g., openssl rand -base64 32,openssl rand -base64 32)
+      API_TOKEN_SALT: uYlEJ1No0Hbvrjaqzc8JdOlgUeNlsjuPWqrIu8UIfGg= # <--- IMPORTANT: Generate a long random string (e.g., openssl rand -base64 32)
+      ADMIN_JWT_SECRET: rKBbAZfLs3wSvQvMQsvNjqXkifj8a+ENumrWDipjuWk= # <--- IMPORTANT: Generate a long random string
+      JWT_SECRET: Sn7oqIb9K6o1iNCNxCp5Ma5arHUzcRvTfZuyLGKCBuI= # <--- IMPORTANT: Generate a long random string
+      # Other common Strapi environment variables
+      NODE_ENV: development
+      # ADMIN_EMAIL: admin@example.com # Strapi usually prompts for admin on first start
+      # ADMIN_PASSWORD: admin_password # Strapi usually prompts for admin on first start
+
+    depends_on:
+      - db # Ensures the database starts before Strapi
+    restart: always
+
+  db:
+    image: postgres:16-alpine # Lightweight PostgreSQL 16
+    container_name: strapi-db
+    ports:
+      - "5432:5432" # Optional: Expose for local DB tools, not needed for Strapi to connect
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data # Persistent storage for PostgreSQL data
+    environment:
+      POSTGRES_DB: strapi # Matches DATABASE_NAME in Strapi service
+      POSTGRES_USER: strapi_user # Matches DATABASE_USERNAME in Strapi service
+      POSTGRES_PASSWORD: YF3bJ7M5 # <--- MUST MATCH DATABASE_PASSWORD IN STRAPI SERVICE!
+    restart: always

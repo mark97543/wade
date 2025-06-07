@@ -30,10 +30,12 @@ function Login() {
         e.preventDefault();
         setLoading(true);
 
-        // --- ADDED VALIDATION AND MORE SPECIFIC LOGGING ---
+        // --- ADD THESE LOGS HERE ---
+        console.log('!!!!!!! HANDLE SUBMIT CALLED !!!!!!!');
         console.log('--- Values before login attempt ---');
         console.log('Email state value:', email);
         console.log('Password state value:', password);
+        // --- END ADDED LOGS ---
 
         if (!email || typeof email !== 'string' || email.trim() === '') {
             console.error('Validation Error: Email is not a valid string or is empty.');

@@ -1,12 +1,15 @@
-// contexts/AuthContext.jsx
+// /home/mark/Documents/wade/contexts/AuthContext.jsx
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { createDirectus, login, refresh, logout, readMe, createUsers, rest } from '@directus/sdk'; //
+import axios from 'axios'; // Import Axios
 
+// --- IMPORTANT: Strapi API Base URL ---
+// This should point to your local Strapi API URL (http://localhost:1337)
+// You should continue to get this from import.meta.env.VITE_DIRECTUS_URL
+// which you updated to http://localhost:1337 in bash/.env
+const STRAPI_API_BASE_URL = import.meta.env.VITE_DIRECTUS_URL;
 
-const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL).with(rest()); //
-console.log('AuthContext: Directus URL used =', import.meta.env.VITE_DIRECTUS_URL);
-console.log('AuthContext: Directus client instance after .with(rest()):', directus);
+console.log('AuthContext: Strapi API URL used =', STRAPI_API_BASE_URL);
 
 
 export const AuthContext = createContext(null);
@@ -20,30 +23,30 @@ export const AuthProvider = ({ children }) => {
     const checkAuthSession = async () => {
       try {
         console.log('Checking for stored tokens...');
-        const accessToken = localStorage.getItem('directus_access_token');
-        const refreshToken = localStorage.getItem('directus_refresh_token');
-        console.log('Found accessToken:', !!accessToken, 'Found refreshToken:', !!refreshToken); //
+        const jwt = localStorage.getItem('strapi_jwt'); // Strapi uses 'jwt' for its token
+        console.log('Found JWT:', !!jwt);
 
-        if (accessToken && refreshToken) {
+        if (jwt) {
           try {
-            await directus.request(refresh());
-            const currentUser = await directus.request(readMe());
-            setUser(currentUser);
-
-          } catch (refreshError) {
-            console.warn('Access token expired or refresh failed, requiring re-login:', refreshError);
-            console.log('Clearing stale tokens from localStorage due to refresh failure.');
-            localStorage.removeItem('directus_access_token');
-            localStorage.removeItem('directus_refresh_token');
+            // Validate JWT by trying to fetch user data
+            const response = await axios.get(`${STRAPI_API_BASE_URL}/api/users/me`, {
+              headers: {
+                Authorization: `Bearer ${jwt}`,
+              },
+            });
+            setUser(response.data);
+          } catch (tokenError) {
+            console.warn('JWT invalid or expired, requiring re-login:', tokenError);
+            console.log('Clearing stale JWT from localStorage due to validation failure.');
+            localStorage.removeItem('strapi_jwt');
             setUser(null);
-            setAuthError(refreshError.message || 'Session invalid, please log in again.');
+            setAuthError(tokenError.message || 'Session invalid, please log in again.');
           }
         }
       } catch (error) {
         console.error('Initial authentication check failed, clearing session:', error);
-        console.log('Clearing tokens from localStorage due to initial auth check failure.');
-        localStorage.removeItem('directus_access_token');
-        localStorage.removeItem('directus_refresh_token');
+        console.log('Clearing JWT from localStorage due to initial auth check failure.');
+        localStorage.removeItem('strapi_jwt');
         setUser(null);
         setAuthError(error.message || 'Failed to authenticate session.');
       } finally {
@@ -55,44 +58,33 @@ export const AuthProvider = ({ children }) => {
 
   const performLogin = async (email, password) => {
     setAuthError(null);
-    console.log('3. Inside performLogin in AuthContext.');
     try {
-      console.log('4. Attempting to call the Directus SDK login...');
-      const loginPayload = { email, password };
-      console.log('Login Payload being sent:', loginPayload); //
-      console.log('Type of email in payload:', typeof loginPayload.email); //
-      console.log('Type of password in payload:', typeof loginPayload.password); //
-      const response = await directus.request(login(loginPayload));
+      const trimmedEmail = email.toString().trim();
+      const trimmedPassword = password.toString().trim();
 
-      console.log('5a. Directus SDK login call completed.');
-      console.log('5b. Full response from Directus login:', response);
-      console.log('5c. Response access_token:', response?.access_token);
-      console.log('5d. Response refresh_token:', response?.refresh_token);
+      console.log('3. Inside performLogin in AuthContext.');
+      console.log('4. Attempting to call the Strapi API login...');
+      console.log('Login Payload being sent:', { identifier: trimmedEmail, password: trimmedPassword });
+      console.log('Type of identifier in payload:', typeof trimmedEmail);
+      console.log('Type of password in payload:', typeof trimmedPassword);
 
-      localStorage.setItem('directus_access_token', response.access_token);
-      localStorage.setItem('directus_refresh_token', response.refresh_token);
-      console.log('Tokens set in localStorage.');
+      // Strapi Login Endpoint
+      const response = await axios.post(`${STRAPI_API_BASE_URL}/api/auth/local`, {
+        identifier: trimmedEmail, // Strapi uses 'identifier' for email/username
+        password: trimmedPassword,
+      });
 
-      console.log('Attempting to read current user details...');
-      const currentUser = await directus.request(readMe());
-      console.log('Current user details received:', currentUser);
-      setUser(currentUser);
+      const jwt = response.data.jwt;
+      const userData = response.data.user;
+
+      localStorage.setItem('strapi_jwt', jwt); // Store Strapi's JWT
+      setUser(userData);
       return true;
     } catch (error) {
-      // --- NEW LOGS HERE ---
-      console.error('Login failed in AuthContext. Full error object:', error);
-      if (error.errors && Array.isArray(error.errors)) {
-        error.errors.forEach((err, index) => {
-          console.error(`Error ${index + 1} details:`, err);
-          console.error(`  Message: ${err.message}`);
-          if (err.extensions) {
-            console.error(`  Code: ${err.extensions.code}`);
-            console.error(`  Field: ${err.extensions.field}`); // If a field is specified
-          }
-        });
-      }
-      // --- END NEW LOGS ---
-      const errorMessage = error.errors ? error.errors[0].message : error.message || 'Login failed.';
+      console.error('Login failed in AuthContext:', error.response ? error.response.data : error.message);
+      const errorMessage = error.response && error.response.data && error.response.data.error && error.response.data.error.message
+        ? error.response.data.error.message
+        : error.message || 'Login failed.';
       setAuthError(errorMessage);
       throw new Error(errorMessage);
     }
@@ -100,16 +92,13 @@ export const AuthProvider = ({ children }) => {
 
   const performLogout = async () => {
     try {
-      await directus.request(logout());
-      console.log('Directus server logout successful.');
+      // No explicit logout API for Strapi JWT, just clear client-side token
+      console.log('Strapi API logout not typically needed for JWT. Clearing client-side token.');
     } catch (error) {
-      console.error('Logout failed with Directus:', error);
+      console.error('Logout failed with Strapi (client-side):', error);
     } finally {
-      console.log('Attempting to remove access_token from localStorage.');
-      localStorage.removeItem('directus_access_token');
-      console.log('Attempting to remove refresh_token from localStorage.');
-      localStorage.removeItem('directus_refresh_token');
-      console.log('Tokens removed from localStorage. User state cleared.');
+      console.log('Attempting to remove strapi_jwt from localStorage. User state cleared.');
+      localStorage.removeItem('strapi_jwt');
       setUser(null);
       setAuthError(null);
     }
@@ -119,32 +108,26 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     console.log('3. performRegistration in context has been called with:', userData);
     try {
-        const ROLE_ID = '81ce4fc0-85d3-4855-ba46-cc1814812b4a'; // You might want to get this dynamically or from .env
+        // Strapi Registration Endpoint
+        const response = await axios.post(`${STRAPI_API_BASE_URL}/api/auth/local/register`, {
+            username: userData.email, // Use email as username for simplicity, or add a username field
+            email: userData.email,
+            password: userData.password,
+        });
+        console.log('Strapi registration response:', response.data);
 
-        const userToCreate = {
-            ...userData,
-            role: ROLE_ID,
-            status: 'active',
-        };
+        // After successful registration, log the user in immediately
+        const jwt = response.data.jwt;
+        const userAfterRegister = response.data.user;
+        localStorage.setItem('strapi_jwt', jwt);
+        setUser(userAfterRegister);
 
-        const registrationResponse = await directus.request(createUsers([userToCreate]));
-        console.log('Directus registration response:', registrationResponse);
         return true;
     } catch (error) {
-        console.error('Registration failed in AuthContext:', error);
-        // --- NEW LOGS HERE ---
-        if (error.errors && Array.isArray(error.errors)) {
-          error.errors.forEach((err, index) => {
-            console.error(`Registration Error ${index + 1} details:`, err);
-            console.error(`  Message: ${err.message}`);
-            if (err.extensions) {
-              console.error(`  Code: ${err.extensions.code}`);
-              console.error(`  Field: ${err.extensions.field}`);
-            }
-          });
-        }
-        // --- END NEW LOGS ---
-        const errorMessage = error.errors ? error.errors[0].message : error.message || 'Registration failed.';
+        console.error('Registration failed in AuthContext:', error.response ? error.response.data : error.message);
+        const errorMessage = error.response && error.response.data && error.response.data.error && error.response.data.error.message
+          ? error.response.data.error.message
+          : error.message || 'Registration failed.';
         setAuthError(errorMessage);
         throw new Error(errorMessage);
     }
@@ -153,13 +136,13 @@ export const AuthProvider = ({ children }) => {
 
   const authContextValue = {
     user,
-    directus,
     isLoggedIn: !!user,
     loading,
     authError,
     login: performLogin,
     logout: performLogout,
     register: performRegistration,
+    // directus removed as we are using axios directly
   };
 
   if (loading) {
