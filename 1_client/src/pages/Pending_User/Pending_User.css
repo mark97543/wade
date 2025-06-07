@@ -1,0 +1,10 @@
+.pending_wrapper{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.pending_wrapper > h3, .pending_wrapper > p{
+    text-align: center;
+    width: 100%;
+}

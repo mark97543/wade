@@ -10,7 +10,8 @@ import { AuthProvider } from '@wade-usa/contexts/AuthContext'; // NEW: Use the a
 import ProtectedRoute from '@wade-usa/components/ProtectedRoute/ProtectedRoute.jsx'
 import Goodbye from './pages/Goodbye/Goodbye';
 import Registration from './pages/Registration/Registration';
-
+import Forbbiden from './pages/forbidden/Forbbiden';
+import Pending_User from './pages/Pending_User/Pending_User';
 
 
 function App() {
@@ -25,11 +26,13 @@ function App() {
             <Route path='/login' element={<Login/>}/>
             <Route path='/goodbye' element={<Goodbye/>}/>
             <Route path='/registration' element={<Registration/>}/>
+            <Route path='/forbidden' element={<Forbbiden/>}/>
             <Route path='/*' element={<Page404/>}/> 
 
             {/* Protected Routes*/}
 
             <Route path = '/dock' element={<ProtectedRoute><Docker/></ProtectedRoute>}/>
+            <Route path='/pending' element={<ProtectedRoute><Pending_User/></ProtectedRoute>}/>
 
 
           </Routes>

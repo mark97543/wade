@@ -1,12 +1,10 @@
 import React from 'react'
-import './Home.css'
+import './Forbidden.css'
 
-
-function Home() {
+function Forbbiden() {
   return (
-    <div className='wrapper home_wrapper'>
-        <h2>Welcome to the wonderfull world of M + S Wade</h2>
-        <div className="Home_video">
+    <div className='forbidden_wrapper'>
+        <div className="forbidden_video">
             <video
                 width="100%" // Example: Make it responsive width
                 preload="metadata" // Helps load dimensions/duration quickly
@@ -15,12 +13,14 @@ function Home() {
                 muted
                 playsInline
             >
-                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/1_client/Home_Video' type="video/mp4" />
+                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/1_client/forbbiden.mp4' type="video/mp4" /> //
                 Your browser does not support the video tag. Please update your browser.
             </video>
         </div>
+        <h3>Warning:</h3>
+        <p>Your Delicate Mind Could not Possibly Fathom Whats On This Page</p>
     </div>
   )
 }
 
-export default Home
+export default Forbbiden

@@ -1,131 +1,101 @@
-import React, {useState, useEffect} from 'react'
-import './Registration.css'
+import React, { useState } from 'react';
 import { useAuth } from '@wade-usa/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { createDirectus, createUsers } from '@directus/sdk'; 
+import './Registration.css'; // Ensure this CSS file exists and is imported
 
+function Register() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [localError, setLocalError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const { register, isLoggedIn } = useAuth(); // Get register function from context
+    const navigate = useNavigate();
 
-
-
-function Registration() {
-    
-
-
-    const [password, setPassword]=useState('')
-    const [passwordCheck, setPasswordCheck]=useState('')
-    const [passwordMessage, setPasswordMessage]=useState('Re-enter Password')
-    const [loading, setLoading]=useState(false)
-    const [error, setError]=useState('')
-    const [email, setEmail]=useState('')
-    const [userName, setUserName]=useState('')
-
-    const {register} = useAuth() ///Gets Register function 
-
-    const changePassword = (e)=>{
-        setPassword(e.target.value)       
-    }
-    
-    const changeCheckPassword = (e) =>{
-        setPasswordCheck(e.target.value)
+    // Redirect if already logged in
+    if (isLoggedIn) {
+        navigate('/dock'); // Or wherever your dashboard page is
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLocalError('');
+        setLoading(true);
 
-
-    // Password Verification 
-    useEffect(()=>{
-
-        if(!password || !passwordCheck){
-            setPasswordMessage('Re-enter Password')
-            return
-        }else if(password !== passwordCheck){
-            setPasswordMessage('Error: Passwords Must Match')
-            return
-        }else if(password === passwordCheck){
-            setPasswordMessage('Passwords Match!')
-            return
+        if (password !== confirmPassword) {
+            setLocalError('Passwords do not match.');
+            setLoading(false);
+            return;
         }
 
-    },[password, passwordCheck])
-
-    const handleSubmit = async (e) =>{
-        e.preventDefault() //This will stop page from reloading on submit. 
-        console.log('1. handleSubmit started.'); 
-
-        setLoading(true)
-
-        if(password !== passwordCheck){
-            setError('Passwords Do Not Match')
-            setLoading(false)
-            return
-        }else if(!userName){
-            setError('User Name is required')
-            setLoading(false)
-            return
-        }else if(!email){
-            setError('Email is required')
-            setLoading(false)
-            return
-        }else if(!password){
-            setError('Password is required')
-            setLoading(false)
-            return
-        }else{
-            setError('')
+        try {
+            // The 'register' function in AuthContext expects a userData object
+            await register({ email, password }); // Pass email and password
+            console.log('Registration successful! Redirecting to dock...');
+            navigate('/dock'); // Redirect to dashboard after successful registration
+        } catch (err) {
+            console.error('Registration failed in Register.jsx component:', err);
+            setLocalError(err.message || 'An unknown error occurred during registration.');
+        } finally {
+            setLoading(false);
         }
+    };
 
-        try{
-            const userData = {
-                first_name:userName,
-                last_name:'default',
-                email:email,
-                password:password,
-            }
-            
-            console.log('2. Calling register with this data:', userData); 
-            await register(userData) //Send Combined information to directus
-            console.log('4. Registration call completed WITHOUT an error.');
+    return (
+        <div className='wrapper register_wrapper'>
+            <div className="reg_video">
+                <video
+                    width="100%" // Example: Make it responsive width
+                    preload="metadata" // Helps load dimensions/duration quickly
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                >
+                    <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/1_client/Register_Cat.mp4' type="video/mp4" />
+                    Your browser does not support the video tag. Please update your browser.
+                </video>
+            </div>
+            <h2>Register for an Account</h2>
+            <form className='form_box' onSubmit={handleSubmit}>
+                <label htmlFor='register_email'>Email</label>
+                <input
+                    id='register_email'
+                    type='email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                />
 
-        }catch(error){
-            setError(error.message ||'Failed to Register')
-            console.error('5. Caught an error in the component:', error);
-        }finally{
-            setLoading(false)
-        }
+                <label htmlFor='register_password'>Password</label>
+                <input
+                    id='register_password'
+                    type='password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                />
 
-    }
+                <label htmlFor='confirm_password'>Confirm Password</label>
+                <input
+                    id='confirm_password'
+                    type='password'
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                />
 
+                {localError && <p className="error-message">{localError}</p>}
 
-  return (
-    <div>
-        <p>Need Dmv Video here</p>
-
-    
-        <form className='form_box' onSubmit={handleSubmit}>
-            <h3>Register Here</h3>
-
-            <p className='reg_error'>{error ? `Error: ${error}` : ''}</p>
-            
-            <label htmlFor='reg_username'>Username</label>
-            <input id='reg_username' type='text' onChange={(e)=>setUserName(e.target.value)} value={userName}></input>
-            
-            <label htmlFor='reg_email'>Email</label>
-            <input id='reg_email' type='email' onChange={(e)=>setEmail(e.target.value)} value={email}></input>
-
-            <label htmlFor='reg_pass'>Password</label>
-            <input id='reg_pass' type='password' onChange={(e)=>changePassword(e)} value={password}></input>
-
-            <label htmlFor='reg_pass_confirm'>{passwordMessage}</label>
-            <input id='reg_pass_confirm' type='password' onChange={(e)=>changeCheckPassword(e)} value={passwordCheck}></input>
-
-            <button type='submit' disabled={loading} className='login_button_page'>{loading ? 'Registering ....': 'Create Account'}</button>
-
-        </form>
-
-
-    </div>
-  )
-
+                <button type='submit' disabled={loading} className='register_button_page'>
+                    {loading ? 'Registering...' : 'Register'}
+                </button>
+            </form>
+        </div>
+    );
 }
 
-
-export default Registration
+export default Register;

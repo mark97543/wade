@@ -1,0 +1,30 @@
+.forbidden_wrapper{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: auto;
+    
+}
+
+.forbidden_wrapper > h3 {
+    text-align: center !important; 
+    width: 100%;
+}
+
+.forbidden_wrapper > p {
+    text-align: center;
+    width: 100%;
+}
+
+.forbidden_video{
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 800px;
+}
+
+.forbidden_video > video {
+    border-radius: 15px;
+}
