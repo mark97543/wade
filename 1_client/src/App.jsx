@@ -31,7 +31,7 @@ function App() {
 
             {/* Protected Routes*/}
 
-            <Route path = '/dock' element={<ProtectedRoute><Docker/></ProtectedRoute>}/>
+            <Route path = '/dock' allowedRoles={['NTK']} element={<ProtectedRoute><Docker/></ProtectedRoute>}/>
             <Route path='/pending' element={<ProtectedRoute><Pending_User/></ProtectedRoute>}/>
 
 
