@@ -29,7 +29,7 @@ async function runTest() {
 
     // 4. If it succeeds, log the result
     console.log('\n✅ SUCCESS! User created successfully.');
-    console.log('Result:', result);
+console.log('Result from server:', JSON.stringify(result, null, 2));
     console.log(`\nPlease check your Directus instance for the user with email: ${uniqueEmail}`);
 
   } catch (error) {

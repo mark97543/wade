@@ -1,51 +1,66 @@
+// 1_client/src/pages/Login/Login.jsx
+
 import React, { useState, useEffect } from 'react';
 import './Login.css';
-import { createDirectus } from '@directus/sdk'; // Keep this import
-import { useAuth } from '@wade-usa/contexts/AuthContext';
-import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from '@wade-usa/contexts/AuthContext'; //
+import { useNavigate, Link } from "react-router-dom"; //
 
 
-const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL);
-//console.log('Login: Directus client initialized (after createDirectus) =', directus);
-
-
+// Removed testDirectusClient as it was for the temporary test
+// The main directus client is provided via AuthContext
 
 
 function Login() {
     const [email, setEmail]=useState('')
     const [password, setPassword]=useState('')
-    const [localError, setLocalError]=useState('') // This is correct from previous step
     const [loading, setLoading]=useState(false)
-    const { login, isLoggedIn, authError } = useAuth(); // Get login function and auth state from context
-    const navigate = useNavigate(); // Get navigate function
-
+    const { login, isLoggedIn, authError } = useAuth(); //
+    const navigate = useNavigate(); //
 
     // Effect to redirect if already logged in or if login succeeds
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/dock'); // Redirect to home page or dashboard upon successful login
-            //window.location.href=('/dock')
+            navigate('/dock'); //
         }
-    }, [isLoggedIn, navigate]); // Depend on isLoggedIn and navigate
+    }, [isLoggedIn, navigate]); //
 
 
     const handleSubmit =async(e)=>{
-        e.preventDefault(); // Prevent default form submission behavior
-        setLocalError(''); // Clear any previous errors
-        setLoading(true); // Set loading state to true
+        console.log('!!!!!!! HANDLE SUBMIT CALLED !!!!!!!'); // You can remove this debug log once confirmed
+        e.preventDefault();
+        setLoading(true);
+
+        // --- ADDED VALIDATION AND MORE SPECIFIC LOGGING ---
+        console.log('--- Values before login attempt ---');
+        console.log('Email state value:', email);
+        console.log('Password state value:', password);
+
+        if (!email || typeof email !== 'string' || email.trim() === '') {
+            console.error('Validation Error: Email is not a valid string or is empty.');
+            // This is just a client-side alert for immediate feedback, AuthContext will also catch it
+            alert('Please enter a valid email address.');
+            setLoading(false);
+            return; // Stop function execution
+        }
+        if (!password || typeof password !== 'string' || password.trim() === '') {
+            console.error('Validation Error: Password is not a valid string or is empty.');
+            alert('Please enter your password.');
+            setLoading(false);
+            return; // Stop function execution
+        }
+        // --- END ADDED VALIDATION AND LOGGING ---
+
 
         try {
-            // Call the login function from AuthContext
             await login(email, password);
             // If login is successful, useEffect will handle redirection
         } catch (err) {
-            // The error is already set in AuthContext, but we can also display a local error
-            console.error('Login failed in Login.jsx component:', err);
-            setLocalError(err.message || 'An unknown error occurred during login.');
+            console.error('Login failed in Login.jsx component:', err); //
+            // The AuthContext already sets authError, which is displayed on the page.
+            // You can optionally parse the error more here if needed, but AuthContext handles display.
         } finally {
-            setLoading(false); // Reset loading state
+            setLoading(false); //
         }
-
     }
 
   return (
@@ -59,17 +74,21 @@ function Login() {
                 muted
                 playsInline
             >
-                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/06c2e9b3-cd30-4aeb-8119-d3c1da46f0a2.mp4' type="video/mp4" />
+                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/06c2e9b3-cd30-4aeb-8119-d3c1da46f0a2.mp4' type="video/mp4" /> //
                 Your browser does not support the video tag. Please update your browser.
             </video>
         </div>
 
         <form className='form_box' onSubmit={handleSubmit}>
             <h3>Welcome Back</h3>
+            {/* Display authError from context */}
+            {(authError) && <p className="reg_error">{`Error: ${authError}`}</p>}
             <label htmlFor='login_input'>Email</label>
-            <input id='login_input' type='email' onChange={(e) => setEmail(e.target.value)} required disabled={loading}></input>
+            {/* Value attribute added to ensure input is controlled by state */}
+            <input id='login_input' type='email' onChange={(e) => setEmail(e.target.value)} value={email} required disabled={loading}></input>
             <label htmlFor='login_password'>Password</label>
-            <input type='password' id='login_password' onChange={(e) => setPassword(e.target.value)} required disabled={loading}></input>
+            {/* Value attribute added to ensure input is controlled by state */}
+            <input type='password' id='login_password' onChange={(e) => setPassword(e.target.value)} value={password} required disabled={loading}></input>
             <button type='submit' disabled={loading} className='login_button_page' >{loading ? 'Logging In...' : 'Login'}</button>
         </form>
 
