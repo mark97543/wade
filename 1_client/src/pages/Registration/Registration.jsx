@@ -2,9 +2,15 @@ import React, {useState, useEffect} from 'react'
 import './Registration.css'
 import { useAuth } from '@wade-usa/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { createDirectus, createUsers } from '@directus/sdk'; 
+
+
+
 
 function Registration() {
     
+
+
     const [password, setPassword]=useState('')
     const [passwordCheck, setPasswordCheck]=useState('')
     const [passwordMessage, setPasswordMessage]=useState('Re-enter Password')
@@ -22,6 +28,8 @@ function Registration() {
     const changeCheckPassword = (e) =>{
         setPasswordCheck(e.target.value)
     }
+
+
 
     // Password Verification 
     useEffect(()=>{
@@ -112,6 +120,7 @@ function Registration() {
             <button type='submit' disabled={loading} className='login_button_page'>{loading ? 'Registering ....': 'Create Account'}</button>
 
         </form>
+
 
     </div>
   )

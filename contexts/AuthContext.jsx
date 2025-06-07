@@ -1,8 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { createDirectus, login, refresh, logout, readMe, createUsers } from '@directus/sdk';
 
-console.log('Value of VITE_DIRECTUS_URL is:', import.meta.env.VITE_DIRECTUS_URL);
-
 
 const directus = createDirectus(import.meta.env.VITE_DIRECTUS_URL);
 
@@ -82,7 +80,7 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     console.log('3. performRegistration in context has been called with:', userData);
     try {
-        const ROLE_ID = '02f6b9d9-4b29-46cf-9639-f0e232be78b1';
+        const ROLE_ID = '81ce4fc0-85d3-4855-ba46-cc1814812b4a';
 
         const userToCreate = {
             ...userData,
