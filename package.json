@@ -17,11 +17,12 @@
     "preview:client": "npm run preview --workspace=1_client",
     "install:all": "npm install",
     "clean:all": "rm -rf ./node_modules && rm -rf 1_client/node_modules 1_client/dist 1_client/.vite && rm -rf _components/node_modules && rm -rf contexts/node_modules"
-    
   },
   "dependencies": {
     "@directus/sdk": "^16.1.2",
+    "@strapi/provider-upload-aws-s3": "^5.15.0",
     "axios": "^1.6.0",
+    "pg": "^8.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.6.2"
