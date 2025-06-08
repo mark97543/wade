@@ -12,15 +12,15 @@ const Header = () => {
 
 
   const handleLoginClick = () => {
-    navigate('/login');
-    //window.location.href ='/login' 
+    //navigate('/login');
+    window.location.href ='/login' 
   };
 
   const handleLogout = async ()=>{
     
     await logout()
-    navigate('/goodbye');
-    //window.location.href = '/goodbye'  
+    //navigate('/goodbye');
+    window.location.href = '/goodbye'  
   }
 
   return (
