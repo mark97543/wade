@@ -5,7 +5,7 @@ import { useAuth } from '@wade-usa/contexts/AuthContext'; // NEW: Use the alias 
 
 const appName = import.meta.env.VITE_APP_NAME;//Read the environment variable to know which app is running
 
-const Header = ({ message = "Hello from header!" }) => {
+const Header = () => {
   
   const navigate = useNavigate(); 
   const { isLoggedIn, user, logout } = useAuth();
@@ -27,9 +27,9 @@ const Header = ({ message = "Hello from header!" }) => {
     <header className='header_container'>
       <div className='header_logo'>
         {isLoggedIn ? (
-           <Link to='/dock'>M+S </Link> 
+          <a href='/dock'>M+S </a>
         ):(
-           <Link to='/'>M+S </Link> 
+           <a href='/'>M+S </a> 
         )}
 
       </div>
