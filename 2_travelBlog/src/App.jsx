@@ -10,7 +10,7 @@ function App() {
 
   return (
     <>
-      <Router basename='/travelBlog'>
+      <Router>
         <AuthProvider>
           <Header></Header>
           <Routes>

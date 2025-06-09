@@ -27,9 +27,9 @@ const Header = () => {
     <header className='header_container'>
       <div className='header_logo'>
         {isLoggedIn ? (
-          <a href='/dock'>M+S </a>
+          <a href='https://wade-usa.com/dock'>M+S </a>
         ):(
-           <a href='/'>M+S </a> 
+           <a href='https://wade-usa.com/'>M+S </a> 
         )}
 
       </div>

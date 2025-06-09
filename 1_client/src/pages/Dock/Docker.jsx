@@ -6,7 +6,7 @@ function Docker() {
   return (
     <div>
         <h1>Placeholder for Docker</h1>
-        <a href="/travelBlog/">Link Text</a>
+        <a href="https://travelblog.wade-usa.com">Link Text</a>
     </div>
   )
 }
