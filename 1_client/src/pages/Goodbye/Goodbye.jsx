@@ -14,7 +14,7 @@ function Goodbye() {
             muted
             playsInline
         >
-            <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/1_client/Goodbye_Video' type="video/mp4" />
+            <source src='https://api.wade-usa.com/uploads/Goodbye_Video_cc8d660a7b.mp4' type="video/mp4" />
             Your browser does not support the video tag. Please update your browser.
         </video>
     </div>

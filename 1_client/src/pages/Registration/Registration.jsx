@@ -52,7 +52,7 @@ function Register() {
                     muted
                     playsInline
                 >
-                    <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/1_client/Register_Cat.mp4' type="video/mp4" />
+                    <source src='https://api.wade-usa.com/uploads/Register_Cat_1146a0e3bf.mp4' type="video/mp4" />
                     Your browser does not support the video tag. Please update your browser.
                 </video>
             </div>

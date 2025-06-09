@@ -13,7 +13,7 @@ function Pending_User() {
                 muted
                 playsInline
             >
-                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/1_client/pending.mp4' type="video/mp4" /> //
+                <source src='https://api.wade-usa.com/uploads/pending_c0a22f88bd.mp4' type="video/mp4" /> //
                 Your browser does not support the video tag. Please update your browser.
             </video>
         </div>

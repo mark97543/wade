@@ -76,7 +76,7 @@ function Login() {
                 muted
                 playsInline
             >
-                <source src='https://01-spaces.sfo3.cdn.digitaloceanspaces.com/1_client/Login_Video' type="video/mp4" /> //
+                <source src='https://api.wade-usa.com/uploads/Login_Video_b01f36a100.mp4' type="video/mp4" /> //
                 Your browser does not support the video tag. Please update your browser.
             </video>
         </div>
